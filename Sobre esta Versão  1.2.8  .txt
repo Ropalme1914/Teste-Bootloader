@@ -1,0 +1,12 @@
+
+O Julio alterou esta versao para 1.2.8 passou a fazer as seguintes novas funções:
+
+ *   Esta versão salva o ultimo valor de temp e umidade na memoria antes de sofrer o reset do watch dog,
+     assim quando a maquina volta sempre, ela ja um valor coerente para por no modbus , sem apresentar valores absurdos e
+     zeros.
+ 
+ *   Essa versao esta 99% ok, em raros casos ela apresenta um zero. Temos uma ideia de como resolver isso.
+
+ *   Dentro do codigo fonte temos mais informações sobre este codigo ver. 1.2.8
+
+ 

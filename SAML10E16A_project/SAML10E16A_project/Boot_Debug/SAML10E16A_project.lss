@@ -1,0 +1,559 @@
+
+SAML10E16A_project.elf:     file format elf32-littlearm
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000003c8  00000000  00000000  00010000  2**2
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .relocate     00000000  20000000  20000000  000103c8  2**0
+                  CONTENTS
+  2 .bss          0000003c  20000000  20000000  00020000  2**2
+                  ALLOC
+  3 .heap         00000204  2000003c  2000003c  00020000  2**0
+                  ALLOC
+  4 .stack        00000400  20000240  20000240  00020000  2**0
+                  ALLOC
+  5 .ARM.attributes 0000002c  00000000  00000000  000103c8  2**0
+                  CONTENTS, READONLY
+  6 .comment      00000059  00000000  00000000  000103f4  2**0
+                  CONTENTS, READONLY
+  7 .debug_info   00008ab1  00000000  00000000  0001044d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_abbrev 0000112b  00000000  00000000  00018efe  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_loc    00001dbf  00000000  00000000  0001a029  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_aranges 00000250  00000000  00000000  0001bde8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 000001f8  00000000  00000000  0001c038  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_macro  00001de4  00000000  00000000  0001c230  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 13 .debug_line   00004259  00000000  00000000  0001e014  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 14 .debug_str    00086429  00000000  00000000  0002226d  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 15 .debug_frame  000004d0  00000000  00000000  000a8698  2**2
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <exception_table>:
+};
+
+/* ----------------------- Start implementation -----------------------------*/
+eMBErrorCode
+eMBInit( eMBMode eMode, UCHAR ucSlaveAddress, UCHAR ucPort, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity eParity, UCHAR ucStopBits )
+{
+   0:	40 06 00 20 63 01 00 00 61 01 00 00 61 01 00 00     @.. c...a...a...
+	...
+    {
+        eStatus = MB_EINVAL;
+    }
+    else
+    {
+        ucMBAddress = ucSlaveAddress;
+  2c:	61 01 00 00 00 00 00 00 00 00 00 00 61 01 00 00     a...........a...
+
+        switch ( eMode )
+        {
+#if MB_RTU_ENABLED > 0
+        case MB_RTU:
+            pvMBFrameStartCur = eMBRTUStart;
+  3c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            pvMBFrameStopCur = eMBRTUStop;
+  4c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            peMBFrameSendCur = eMBRTUSend;
+  5c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            peMBFrameReceiveCur = eMBRTUReceive;
+            pvMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBPortClose : NULL;
+  6c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            pxMBFrameCBByteReceived = xMBRTUReceiveFSM;
+  7c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            pxMBFrameCBTransmitterEmpty = xMBRTUTransmitFSM;
+  8c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            pxMBPortCBTimerExpired = xMBRTUTimerT35Expired;
+  9c:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+
+            eStatus = eMBRTUInit( ucMBAddress, ucPort, ulBaudRate, ucDataBits, eParity, ucStopBits );
+  ac:	61 01 00 00 61 01 00 00 61 01 00 00 e7 01 00 00     a...a...a.......
+            eStatus = MB_EINVAL;
+        }
+
+        if( eStatus == MB_ENOERR )
+        {
+            if( !xMBPortEventInit(  ) )
+  bc:	f7 01 00 00 3b 02 00 00 7d 02 00 00 23 03 00 00     ....;...}...#...
+            pvMBFrameStartCur = eMBASCIIStart;
+  cc:	61 01 00 00 3b 03 00 00 61 01 00 00 61 01 00 00     a...;...a...a...
+  dc:	61 01 00 00 61 01 00 00 61 01 00 00 61 01 00 00     a...a...a...a...
+            peMBFrameSendCur = eMBASCIISend;
+  ec:	61 01 00 00 61 01 00 00                             a...a...
+
+000000f4 <__do_global_dtors_aux>:
+            peMBFrameReceiveCur = eMBASCIIReceive;
+  f4:	b510      	push	{r4, lr}
+  f6:	f240 0400 	movw	r4, #0
+  fa:	f2c2 0400 	movt	r4, #8192	; 0x2000
+            pvMBFrameCloseCur = MB_PORT_HAS_CLOSE ? vMBPortClose : NULL;
+  fe:	7823      	ldrb	r3, [r4, #0]
+            pxMBFrameCBByteReceived = xMBASCIIReceiveFSM;
+ 100:	b963      	cbnz	r3, 11c <__do_global_dtors_aux+0x28>
+ 102:	f240 0300 	movw	r3, #0
+ 106:	f2c0 0300 	movt	r3, #0
+ 10a:	b12b      	cbz	r3, 118 <__do_global_dtors_aux+0x24>
+ 10c:	f240 30c8 	movw	r0, #968	; 0x3c8
+ 110:	f2c0 0000 	movt	r0, #0
+            pxMBFrameCBTransmitterEmpty = xMBASCIITransmitFSM;
+ 114:	e000      	b.n	118 <__do_global_dtors_aux+0x24>
+ 116:	bf00      	nop
+ 118:	2301      	movs	r3, #1
+ 11a:	7023      	strb	r3, [r4, #0]
+ 11c:	bd10      	pop	{r4, pc}
+ 11e:	46c0      	nop			; (mov r8, r8)
+
+00000120 <frame_dummy>:
+ 120:	f240 0300 	movw	r3, #0
+            pxMBPortCBTimerExpired = xMBASCIITimerT1SExpired;
+ 124:	f2c0 0300 	movt	r3, #0
+ 128:	b510      	push	{r4, lr}
+ 12a:	b14b      	cbz	r3, 140 <frame_dummy+0x20>
+ 12c:	f240 0104 	movw	r1, #4
+ 130:	f240 30c8 	movw	r0, #968	; 0x3c8
+ 134:	f2c2 0100 	movt	r1, #8192	; 0x2000
+            eStatus = eMBASCIIInit( ucMBAddress, ucPort, ulBaudRate, eParity );
+ 138:	f2c0 0000 	movt	r0, #0
+ 13c:	e000      	b.n	140 <frame_dummy+0x20>
+ 13e:	bf00      	nop
+ 140:	f240 30c8 	movw	r0, #968	; 0x3c8
+            break;
+ 144:	f2c0 0000 	movt	r0, #0
+                eStatus = MB_EPORTERR;
+            }
+            else
+            {
+                eMBCurrentMode = eMode;
+                eMBState = STATE_DISABLED;
+ 148:	6803      	ldr	r3, [r0, #0]
+ 14a:	b903      	cbnz	r3, 14e <frame_dummy+0x2e>
+ 14c:	bd10      	pop	{r4, pc}
+ 14e:	f240 0300 	movw	r3, #0
+ 152:	f2c0 0300 	movt	r3, #0
+ 156:	2b00      	cmp	r3, #0
+ 158:	d0f8      	beq.n	14c <frame_dummy+0x2c>
+ 15a:	4798      	blx	r3
+ 15c:	e7f6      	b.n	14c <frame_dummy+0x2c>
+ 15e:	46c0      	nop			; (mov r8, r8)
+
+00000160 <Dummy_Handler>:
+
+/**
+ * \brief Default interrupt handler for unused IRQs.
+ */
+void Dummy_Handler(void)
+{
+ 160:	e7fe      	b.n	160 <Dummy_Handler>
+
+00000162 <Reset_Handler>:
+{
+ 162:	b510      	push	{r4, lr}
+        if (pSrc != pDest) {
+ 164:	f240 32c8 	movw	r2, #968	; 0x3c8
+ 168:	f2c0 0200 	movt	r2, #0
+ 16c:	f240 0300 	movw	r3, #0
+ 170:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 174:	429a      	cmp	r2, r3
+ 176:	d012      	beq.n	19e <Reset_Handler+0x3c>
+ 178:	f240 0300 	movw	r3, #0
+ 17c:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 180:	f240 32c8 	movw	r2, #968	; 0x3c8
+ 184:	f2c0 0200 	movt	r2, #0
+ 188:	e003      	b.n	192 <Reset_Handler+0x30>
+                        *pDest++ = *pSrc++;
+ 18a:	6811      	ldr	r1, [r2, #0]
+ 18c:	6019      	str	r1, [r3, #0]
+ 18e:	3304      	adds	r3, #4
+ 190:	3204      	adds	r2, #4
+                for (; pDest < &_erelocate;) {
+ 192:	f240 0100 	movw	r1, #0
+ 196:	f2c2 0100 	movt	r1, #8192	; 0x2000
+ 19a:	428b      	cmp	r3, r1
+ 19c:	d3f5      	bcc.n	18a <Reset_Handler+0x28>
+                        *pDest++ = *pSrc++;
+ 19e:	f240 0300 	movw	r3, #0
+ 1a2:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 1a6:	e002      	b.n	1ae <Reset_Handler+0x4c>
+                *pDest++ = 0;
+ 1a8:	2200      	movs	r2, #0
+ 1aa:	601a      	str	r2, [r3, #0]
+ 1ac:	3304      	adds	r3, #4
+        for (pDest = &_szero; pDest < &_ezero;) {
+ 1ae:	f240 023c 	movw	r2, #60	; 0x3c
+ 1b2:	f2c2 0200 	movt	r2, #8192	; 0x2000
+ 1b6:	4293      	cmp	r3, r2
+ 1b8:	d3f6      	bcc.n	1a8 <Reset_Handler+0x46>
+        SCB->VTOR = ((uint32_t) pSrc & SCB_VTOR_TBLOFF_Msk);
+ 1ba:	f240 0300 	movw	r3, #0
+ 1be:	f2c0 0300 	movt	r3, #0
+ 1c2:	227f      	movs	r2, #127	; 0x7f
+ 1c4:	4393      	bics	r3, r2
+ 1c6:	f64e 5200 	movw	r2, #60672	; 0xed00
+ 1ca:	f2ce 0200 	movt	r2, #57344	; 0xe000
+ 1ce:	6093      	str	r3, [r2, #8]
+        __libc_init_array();
+ 1d0:	f240 3359 	movw	r3, #857	; 0x359
+ 1d4:	f2c0 0300 	movt	r3, #0
+ 1d8:	4798      	blx	r3
+        main();
+ 1da:	f240 3353 	movw	r3, #851	; 0x353
+ 1de:	f2c0 0300 	movt	r3, #0
+ 1e2:	4798      	blx	r3
+ 1e4:	e7fe      	b.n	1e4 <Reset_Handler+0x82>
+
+000001e6 <SERCOM2_0_Handler>:
+	| 0 << SERCOM_USART_CTRLB_COLDEN_Pos			/* Collision Detection Enable: disabled */
+	| ctrlB_SBMODE << SERCOM_USART_CTRLB_SBMODE_Pos			/* Stop Bit Mode: disabled */
+	| ctrlB_CHSIZE << SERCOM_USART_CTRLB_CHSIZE_Pos	/* Character Size: 0 */
+	);
+
+	uint16_t baudReg = (uint16_t)(65536.0-((65536.0*16.0*((float)ulBaudRate))/((float)CONF_GCLK_SERCOM2_CORE_FREQUENCY)));
+ 1e6:	b510      	push	{r4, lr}
+ 1e8:	f240 0328 	movw	r3, #40	; 0x28
+ 1ec:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 1f0:	681b      	ldr	r3, [r3, #0]
+ 1f2:	4798      	blx	r3
+ 1f4:	bd10      	pop	{r4, pc}
+
+000001f6 <SERCOM2_1_Handler>:
+}
+
+static inline void hri_sercomusart_write_BAUD_reg(const void *const hw, hri_sercomusart_baud_reg_t data)
+{
+	SERCOM_CRITICAL_SECTION_ENTER();
+	((Sercom *)hw)->USART.BAUD.reg = data;
+ 1f6:	b510      	push	{r4, lr}
+ 1f8:	f640 4300 	movw	r3, #3072	; 0xc00
+ 1fc:	f2c4 2300 	movt	r3, #16896	; 0x4200
+	((Sercom *)hw)->USART.INTENSET.reg = data;
+ 200:	2202      	movs	r2, #2
+ 202:	761a      	strb	r2, [r3, #24]
+	((Sercom *)hw)->USART.INTENCLR.reg = ~data;
+ 204:	f24e 1300 	movw	r3, #57600	; 0xe100
+	tmp = ((Sercom *)hw)->USART.CTRLA.reg;
+ 208:	f2ce 0300 	movt	r3, #57344	; 0xe000
+	tmp &= ~SERCOM_USART_CTRLA_ENABLE;
+ 20c:	2180      	movs	r1, #128	; 0x80
+	tmp |= value << SERCOM_USART_CTRLA_ENABLE_Pos;
+ 20e:	0609      	lsls	r1, r1, #24
+	((Sercom *)hw)->USART.CTRLA.reg = tmp;
+ 210:	327e      	adds	r2, #126	; 0x7e
+	while (((Sercom *)hw)->USART.SYNCBUSY.reg & reg) {
+ 212:	5099      	str	r1, [r3, r2]
+ 214:	f3bf 8f4f 	dsb	sy
+ 218:	f3bf 8f6f 	isb	sy
+ 21c:	2064      	movs	r0, #100	; 0x64
+ 21e:	f240 23d1 	movw	r3, #721	; 0x2d1
+	| 1 << SERCOM_USART_INTENSET_DRE_Pos		/* Data Register Empty Interrupt Enable: enabled */
+	);
+
+	hri_sercomusart_write_CTRLA_ENABLE_bit(SERCOM2, 1 << SERCOM_USART_CTRLA_ENABLE_Pos); /* Enable: enabled */
+
+	USART_0_PORT_init();
+ 222:	f2c0 0300 	movt	r3, #0
+ 226:	4798      	blx	r3
+ 228:	23c0      	movs	r3, #192	; 0xc0
+	
+    return stat;
+}
+ 22a:	05db      	lsls	r3, r3, #23
+ 22c:	f240 4200 	movw	r2, #1024	; 0x400
+ 230:	615a      	str	r2, [r3, #20]
+ 232:	f640 0200 	movw	r2, #2048	; 0x800
+			ctrlB_SBMODE = 1;
+ 236:	615a      	str	r2, [r3, #20]
+ 238:	bd10      	pop	{r4, pc}
+
+0000023a <SERCOM2_2_Handler>:
+ 23a:	b510      	push	{r4, lr}
+ 23c:	f640 4300 	movw	r3, #3072	; 0xc00
+ 240:	f2c4 2300 	movt	r3, #16896	; 0x4200
+	if ( ((SERCOM2->USART.INTFLAG.reg & SERCOM_USART_INTFLAG_ERROR) >> SERCOM_USART_INTFLAG_ERROR_Pos) )//((SERCOM2->USART.STATUS.reg & SERCOM_USART_STATUS_BUFOVF) >> SERCOM_USART_STATUS_BUFOVF_Pos) )
+ 244:	7e1b      	ldrb	r3, [r3, #24]
+ 246:	b25b      	sxtb	r3, r3
+ 248:	2b00      	cmp	r3, #0
+ 24a:	db06      	blt.n	25a <SERCOM2_2_Handler+0x20>
+		pxMBFrameCBByteReceived();
+ 24c:	f240 0330 	movw	r3, #48	; 0x30
+ 250:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 254:	681b      	ldr	r3, [r3, #0]
+ 256:	4798      	blx	r3
+};
+ 258:	bd10      	pop	{r4, pc}
+		uint8_t dummyRead = SERCOM2 -> USART.DATA.reg;					// Dummy read the DATA register to clear the flag, the only way to clear it without disabling this interrupt.
+ 25a:	f640 4300 	movw	r3, #3072	; 0xc00
+ 25e:	f2c4 2300 	movt	r3, #16896	; 0x4200
+ 262:	8d1a      	ldrh	r2, [r3, #40]	; 0x28
+		SERCOM2->USART.INTFLAG.reg = SERCOM_USART_INTFLAG_ERROR;		// Clear error flag	
+ 264:	2280      	movs	r2, #128	; 0x80
+ 266:	761a      	strb	r2, [r3, #24]
+		if ( ((SERCOM2->USART.STATUS.reg & SERCOM_USART_STATUS_PERR) >> SERCOM_USART_STATUS_PERR_Pos) )
+ 268:	8b5b      	ldrh	r3, [r3, #26]
+ 26a:	07db      	lsls	r3, r3, #31
+ 26c:	d5f4      	bpl.n	258 <SERCOM2_2_Handler+0x1e>
+			SERCOM2->USART.STATUS.reg = SERCOM_USART_STATUS_PERR;		// Clear parity error flag	
+ 26e:	f640 4300 	movw	r3, #3072	; 0xc00
+ 272:	f2c4 2300 	movt	r3, #16896	; 0x4200
+ 276:	3a7f      	subs	r2, #127	; 0x7f
+ 278:	835a      	strh	r2, [r3, #26]
+ 27a:	e7ed      	b.n	258 <SERCOM2_2_Handler+0x1e>
+
+0000027c <SERCOM2_OTHER_Handler>:
+	uint8_t intflag = SERCOM2->USART.INTENSET.reg & SERCOM2->USART.INTFLAG.reg;	// Only look at the flags which are actually used
+ 27c:	f640 4200 	movw	r2, #3072	; 0xc00
+ 280:	f2c4 2200 	movt	r2, #16896	; 0x4200
+ 284:	7d91      	ldrb	r1, [r2, #22]
+ 286:	7e13      	ldrb	r3, [r2, #24]
+ 288:	400b      	ands	r3, r1
+	if (intflag & SERCOM_USART_INTFLAG_RXS)						// RXS (Receive Start)
+ 28a:	071a      	lsls	r2, r3, #28
+ 28c:	d505      	bpl.n	29a <SERCOM2_OTHER_Handler+0x1e>
+		SERCOM2->USART.INTFLAG.reg = SERCOM_USART_INTFLAG_RXS;	// Clear the interrupt flag
+ 28e:	f640 4200 	movw	r2, #3072	; 0xc00
+ 292:	f2c4 2200 	movt	r2, #16896	; 0x4200
+ 296:	2108      	movs	r1, #8
+ 298:	7611      	strb	r1, [r2, #24]
+	if (intflag & SERCOM_USART_INTFLAG_CTSIC)					// CTSIC (Clear to Send Input Change)
+ 29a:	06da      	lsls	r2, r3, #27
+ 29c:	d505      	bpl.n	2aa <SERCOM2_OTHER_Handler+0x2e>
+		SERCOM2->USART.INTFLAG.reg = SERCOM_USART_INTFLAG_CTSIC;// Clear the interrupt flag
+ 29e:	f640 4200 	movw	r2, #3072	; 0xc00
+ 2a2:	f2c4 2200 	movt	r2, #16896	; 0x4200
+ 2a6:	2110      	movs	r1, #16
+ 2a8:	7611      	strb	r1, [r2, #24]
+	if (intflag & SERCOM_USART_INTFLAG_RXBRK)					// RXBRK (Receive Break)
+ 2aa:	069a      	lsls	r2, r3, #26
+ 2ac:	d505      	bpl.n	2ba <SERCOM2_OTHER_Handler+0x3e>
+		SERCOM2->USART.INTFLAG.reg = SERCOM_USART_INTFLAG_RXBRK;// Clear the interrupt flag
+ 2ae:	f640 4200 	movw	r2, #3072	; 0xc00
+ 2b2:	f2c4 2200 	movt	r2, #16896	; 0x4200
+ 2b6:	2120      	movs	r1, #32
+ 2b8:	7611      	strb	r1, [r2, #24]
+	if (intflag & SERCOM_USART_INTFLAG_ERROR)					// ERROR(Error)
+ 2ba:	b25b      	sxtb	r3, r3
+ 2bc:	2b00      	cmp	r3, #0
+ 2be:	db00      	blt.n	2c2 <SERCOM2_OTHER_Handler+0x46>
+};
+ 2c0:	4770      	bx	lr
+		SERCOM2->USART.INTFLAG.reg = SERCOM_USART_INTFLAG_ERROR;// Clear the interrupt flag
+ 2c2:	f640 4300 	movw	r3, #3072	; 0xc00
+ 2c6:	f2c4 2300 	movt	r3, #16896	; 0x4200
+ 2ca:	2280      	movs	r2, #128	; 0x80
+ 2cc:	761a      	strb	r2, [r3, #24]
+};
+ 2ce:	e7f7      	b.n	2c0 <SERCOM2_OTHER_Handler+0x44>
+
+000002d0 <delay_us>:
+
+/**
+ * \brief Perform delay in us
+ */
+void delay_us(const uint16_t us)
+{
+ 2d0:	b510      	push	{r4, lr}
+	_delay_cycles(hardware, _get_cycles_for_us(us));
+ 2d2:	f240 031c 	movw	r3, #28
+ 2d6:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 2da:	681c      	ldr	r4, [r3, #0]
+ 2dc:	f240 23f7 	movw	r3, #759	; 0x2f7
+ 2e0:	f2c0 0300 	movt	r3, #0
+ 2e4:	4798      	blx	r3
+ 2e6:	0001      	movs	r1, r0
+ 2e8:	0020      	movs	r0, r4
+ 2ea:	f240 3307 	movw	r3, #775	; 0x307
+ 2ee:	f2c0 0300 	movt	r3, #0
+ 2f2:	4798      	blx	r3
+}
+ 2f4:	bd10      	pop	{r4, pc}
+
+000002f6 <_get_cycles_for_us>:
+ */
+static inline uint32_t _get_cycles_for_us_internal(const uint16_t us, const uint32_t freq, const uint8_t power)
+{
+	switch (power) {
+	case 8:
+		return (us * (freq / 100000) + 29) / 30;
+ 2f6:	0083      	lsls	r3, r0, #2
+ 2f8:	1818      	adds	r0, r3, r0
+ 2fa:	0143      	lsls	r3, r0, #5
+ 2fc:	331d      	adds	r3, #29
+ 2fe:	201e      	movs	r0, #30
+ 300:	fbb3 f0f0 	udiv	r0, r3, r0
+ * \brief Retrieve the amount of cycles to delay for the given amount of us
+ */
+uint32_t _get_cycles_for_us(const uint16_t us)
+{
+	return _get_cycles_for_us_internal(us, CONF_CPU_FREQUENCY, CPU_FREQ_POWER);
+}
+ 304:	4770      	bx	lr
+
+00000306 <_delay_cycles>:
+#if defined(__GNUC__) && (__ARMCOMPILER_VERSION > 6000000) /*  Keil MDK with ARM Compiler 6 */
+	__asm("__delay:\n"
+	      "subs r1, r1, #1\n"
+	      "bhi __delay\n");
+#elif defined __GNUC__
+	__asm(".syntax unified\n"
+ 306:	3901      	subs	r1, #1
+ 308:	d8fd      	bhi.n	306 <_delay_cycles>
+	__asm("__delay:\n"
+	      "subs r1, r1, #1\n"
+	      "bhi __delay\n");
+#endif
+#endif
+}
+ 30a:	4770      	bx	lr
+
+0000030c <tc_interrupt_handler>:
+ * \internal TC interrupt handler for Timer
+ *
+ * \param[in] instance TC instance number
+ */
+static void tc_interrupt_handler(struct _timer_device *device)
+{
+ 30c:	b510      	push	{r4, lr}
+	void *const hw = device->hw;
+ 30e:	68c3      	ldr	r3, [r0, #12]
+	((Tc *)hw)->COUNT16.INTFLAG.reg = TC_INTFLAG_MC1_Msk;
+}
+
+static inline bool hri_tc_get_interrupt_OVF_bit(const void *const hw)
+{
+	return (((Tc *)hw)->COUNT16.INTFLAG.reg & TC_INTFLAG_OVF_Msk) >> TC_INTFLAG_OVF_Pos;
+ 310:	7a9a      	ldrb	r2, [r3, #10]
+
+	if (hri_tc_get_interrupt_OVF_bit(hw)) {
+ 312:	07d2      	lsls	r2, r2, #31
+ 314:	d400      	bmi.n	318 <tc_interrupt_handler+0xc>
+		hri_tc_clear_interrupt_OVF_bit(hw);
+		device->timer_cb.period_expired(device);
+	}
+}
+ 316:	bd10      	pop	{r4, pc}
+}
+
+static inline void hri_tc_clear_interrupt_OVF_bit(const void *const hw)
+{
+	((Tc *)hw)->COUNT16.INTFLAG.reg = TC_INTFLAG_OVF_Msk;
+ 318:	2201      	movs	r2, #1
+ 31a:	729a      	strb	r2, [r3, #10]
+		device->timer_cb.period_expired(device);
+ 31c:	6803      	ldr	r3, [r0, #0]
+ 31e:	4798      	blx	r3
+}
+ 320:	e7f9      	b.n	316 <tc_interrupt_handler+0xa>
+
+00000322 <TC0_Handler>:
+
+/**
+ * \brief TC interrupt handler
+ */
+void TC0_Handler(void)
+{
+ 322:	b510      	push	{r4, lr}
+	tc_interrupt_handler(_tc0_dev);
+ 324:	f240 0320 	movw	r3, #32
+ 328:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 32c:	6818      	ldr	r0, [r3, #0]
+ 32e:	f240 330d 	movw	r3, #781	; 0x30d
+ 332:	f2c0 0300 	movt	r3, #0
+ 336:	4798      	blx	r3
+}
+ 338:	bd10      	pop	{r4, pc}
+
+0000033a <TC2_Handler>:
+
+/**
+ * \brief TC interrupt handler
+ */
+void TC2_Handler(void)
+{
+ 33a:	b510      	push	{r4, lr}
+	tc_interrupt_handler(_tc2_dev);
+ 33c:	f240 0320 	movw	r3, #32
+ 340:	f2c2 0300 	movt	r3, #8192	; 0x2000
+ 344:	6858      	ldr	r0, [r3, #4]
+ 346:	f240 330d 	movw	r3, #781	; 0x30d
+ 34a:	f2c0 0300 	movt	r3, #0
+ 34e:	4798      	blx	r3
+}
+ 350:	bd10      	pop	{r4, pc}
+
+00000352 <main>:
+#ifdef BOOTLOADER
+
+main()
+{
+	
+}
+ 352:	2000      	movs	r0, #0
+ 354:	4770      	bx	lr
+	...
+
+00000358 <__libc_init_array>:
+ 358:	b570      	push	{r4, r5, r6, lr}
+ 35a:	2500      	movs	r5, #0
+ 35c:	4b0e      	ldr	r3, [pc, #56]	; (398 <__libc_init_array+0x40>)
+ 35e:	4c0f      	ldr	r4, [pc, #60]	; (39c <__libc_init_array+0x44>)
+ 360:	1ae4      	subs	r4, r4, r3
+ 362:	10a4      	asrs	r4, r4, #2
+ 364:	42a5      	cmp	r5, r4
+ 366:	d109      	bne.n	37c <__libc_init_array+0x24>
+ 368:	2500      	movs	r5, #0
+ 36a:	f000 f81d 	bl	3a8 <_init>
+ 36e:	4c0c      	ldr	r4, [pc, #48]	; (3a0 <__libc_init_array+0x48>)
+ 370:	4b0c      	ldr	r3, [pc, #48]	; (3a4 <__libc_init_array+0x4c>)
+ 372:	1ae4      	subs	r4, r4, r3
+ 374:	10a4      	asrs	r4, r4, #2
+ 376:	42a5      	cmp	r5, r4
+ 378:	d107      	bne.n	38a <__libc_init_array+0x32>
+ 37a:	bd70      	pop	{r4, r5, r6, pc}
+ 37c:	4a06      	ldr	r2, [pc, #24]	; (398 <__libc_init_array+0x40>)
+ 37e:	00ab      	lsls	r3, r5, #2
+ 380:	189b      	adds	r3, r3, r2
+ 382:	681b      	ldr	r3, [r3, #0]
+ 384:	4798      	blx	r3
+ 386:	3501      	adds	r5, #1
+ 388:	e7ec      	b.n	364 <__libc_init_array+0xc>
+ 38a:	4a06      	ldr	r2, [pc, #24]	; (3a4 <__libc_init_array+0x4c>)
+ 38c:	00ab      	lsls	r3, r5, #2
+ 38e:	189b      	adds	r3, r3, r2
+ 390:	681b      	ldr	r3, [r3, #0]
+ 392:	4798      	blx	r3
+ 394:	3501      	adds	r5, #1
+ 396:	e7ee      	b.n	376 <__libc_init_array+0x1e>
+ 398:	000003b4 	.word	0x000003b4
+ 39c:	000003b4 	.word	0x000003b4
+ 3a0:	000003b8 	.word	0x000003b8
+ 3a4:	000003b4 	.word	0x000003b4
+
+000003a8 <_init>:
+ 3a8:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 3aa:	46c0      	nop			; (mov r8, r8)
+ 3ac:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 3ae:	bc08      	pop	{r3}
+ 3b0:	469e      	mov	lr, r3
+ 3b2:	4770      	bx	lr
+
+000003b4 <__init_array_start>:
+ 3b4:	00000121 	.word	0x00000121
+
+000003b8 <_fini>:
+ 3b8:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 3ba:	46c0      	nop			; (mov r8, r8)
+ 3bc:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 3be:	bc08      	pop	{r3}
+ 3c0:	469e      	mov	lr, r3
+ 3c2:	4770      	bx	lr
+
+000003c4 <__fini_array_start>:
+ 3c4:	000000f5 	.word	0x000000f5
